@@ -1,0 +1,19 @@
+{
+  "cases": [
+    {
+      "content": "почистить зубы",
+      "completed": false,
+      "id": 1
+    },
+    {
+      "content": "помыть руки",
+      "completed": false,
+      "id": 2
+    },
+    {
+      "content": "прибраться в комнате",
+      "completed": false,
+      "id": 3
+    }
+  ]
+}
