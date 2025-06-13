@@ -1,74 +1,31 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "../App.module.css";
-import { useDebounseSearch } from "../hooks/useDebounse";
+import { useGetTodo } from "../hooks/useGetTodo";
+import { useSearch } from "../hooks/useSearch";
+import { textOneLine } from "../function/textOneLine";
+import { homeAddCase } from "../function/homeAddCase";
+import { homeSortCase } from "../function/homeSortCase";
 
-const textOneLine = (text, maxLength = 30) => {
-	if (text.length > maxLength) {
-		return text.slice(0, maxLength) + "...";
-	}
-	return text;
-};
-
-export const HomePage = ({ cases, setCases, isLoading, setIsLoading }) => {
-	const [refreshCases, setRefreshCases] = useState(false);
+export const HomePage = () => {
+	const [isLoading, setIsLoading] = useState(false);
+	const { cases, setCases } = useGetTodo(setIsLoading);
 
 	const [newCase, setNewCase] = useState("");
 
 	const [sort, setSort] = useState(false);
 
 	const [search, setSearch] = useState("");
-	const [resultSearch, setResultSearch] = useState([]);
-	const debouncedSearchTerm = useDebounseSearch(search, 500);
+	const { resultSearch } = useSearch(cases, search, setIsLoading);
 
-	useEffect(() => {
-		setIsLoading(true);
+	const { requestAddCase } = homeAddCase(
+		newCase,
+		setCases,
+		cases,
+		setNewCase
+	);
 
-		fetch("http://localhost:3000/cases")
-			.then((loadedData) => loadedData.json())
-			.then((loadedCases) => {
-				setCases(loadedCases);
-			})
-			.finally(() => setIsLoading(false));
-	}, [refreshCases]);
-
-	const requestAddCase = () => {
-		fetch("http://localhost:3000/cases", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				content: newCase,
-				completed: false,
-			}),
-		})
-			.then((response) => response.json())
-			.then((data) => setCases([...cases, data]));
-		setNewCase("");
-	};
-
-	const sortCase = () => {
-		setSort(!sort);
-		if (!sort) {
-			setCases(
-				cases.toSorted((a, b) => a.content.localeCompare(b.content))
-			);
-		}
-	};
-
-	useEffect(() => {
-		if (debouncedSearchTerm && debouncedSearchTerm.trim() !== "") {
-			setIsLoading(true);
-
-			fetch(`http://localhost:3000/cases?q=${debouncedSearchTerm}`)
-				.then((response) => response.json())
-				.then((data) => {
-					setResultSearch(data);
-				})
-				.finally(() => setIsLoading(false));
-		} else {
-			setResultSearch(cases);
-		}
-	}, [debouncedSearchTerm, cases]);
+	const { sortCase } = homeSortCase(setSort, sort, setCases, cases);
 
 	return (
 		<>
