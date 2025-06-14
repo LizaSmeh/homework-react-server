@@ -6,7 +6,7 @@ export const caseUpdete = (setUpdateCaset, updateCase, setCases) => {
 			fetch(`http://localhost:3000/cases/${id}`, {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ content: updateCase }),
+				body: JSON.stringify({ content: task }),
 			})
 				.then((response) => response.json())
 				.then((data) => {
