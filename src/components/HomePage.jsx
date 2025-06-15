@@ -1,31 +1,34 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "../App.module.css";
-import { useGetTodo } from "../hooks/useGetTodo";
-import { useSearch } from "../hooks/useSearch";
+import { useContext, useEffect } from "react";
+import { AppContext } from "../AppContext";
 import { textOneLine } from "../function/textOneLine";
-import { homeAddCase } from "../function/homeAddCase";
-import { homeSortCase } from "../function/homeSortCase";
 
 export const HomePage = () => {
-	const [isLoading, setIsLoading] = useState(false);
-	const { cases, setCases } = useGetTodo(setIsLoading);
-
-	const [newCase, setNewCase] = useState("");
-
-	const [sort, setSort] = useState(false);
-
-	const [search, setSearch] = useState("");
-	const { resultSearch } = useSearch(cases, search, setIsLoading);
-
-	const { requestAddCase } = homeAddCase(
+	const {
+		isLoading,
+		setIsLoading,
 		newCase,
-		setCases,
+		setNewCase,
+		sortCase,
+		search,
+		setSearch,
+		resultSearch,
+		requestAddCase,
 		cases,
-		setNewCase
-	);
+		setCases,
+	} = useContext(AppContext);
 
-	const { sortCase } = homeSortCase(setSort, sort, setCases, cases);
+	useEffect(() => {
+		setIsLoading(true);
+
+		fetch("http://localhost:3000/cases")
+			.then((loadedData) => loadedData.json())
+			.then((loadedCases) => {
+				setCases(loadedCases);
+			})
+			.finally(() => setIsLoading(false));
+	}, []);
 
 	return (
 		<>

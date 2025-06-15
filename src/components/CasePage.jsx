@@ -1,24 +1,43 @@
-import { useState } from "react";
+import { useContext, useEffect } from "react";
+import { AppContext } from "../AppContext";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../App.module.css";
-import { useGetCase } from "../hooks/useGetCase";
-import { caseUpdete } from "../function/caseUpdete";
-import { caseDelete } from "../function/caseDelete";
 
 export const CasePage = () => {
+	const { setUpdateCaset, cases, setCases } = useContext(AppContext);
 	const { id } = useParams();
 
 	const navigate = useNavigate();
 
-	const [updateCase, setUpdateCaset] = useState("");
-	const { cases, setCases } = useGetCase(id);
-	const { requestUpdateCase } = caseUpdete(
-		setUpdateCaset,
-		updateCase,
-		setCases
-	);
+	useEffect(() => {
+		fetch(`http://localhost:3000/cases/${id}`)
+			.then((loadedData) => loadedData.json())
+			.then((loadedCases) => {
+				setCases(loadedCases);
+			});
+	}, [id]);
 
-	const { requestDeleteCase } = caseDelete(navigate);
+	const requestUpdateCase = (content, id) => {
+		const task = prompt("Введите свои изменения:", content);
+		setUpdateCaset(task);
+
+		fetch(`http://localhost:3000/cases/${id}`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ content: task }),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				setCases(data);
+			});
+	};
+
+	const requestDeleteCase = (id) => {
+		fetch(`http://localhost:3000/cases/${id}`, {
+			method: "DELETE",
+		});
+		navigate("/");
+	};
 
 	return (
 		<>
