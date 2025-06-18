@@ -34,17 +34,10 @@ body {
 
 
 }
+
 .case {
 	color:rgb(28, 3, 11);
 	font-size: 30px;
-}
-.navlink  {
-	color:rgb(28, 3, 11);
-	font-size: 30px;
-}
-
-.case:hover {
-	text-decoration: underline;
 }
 
 .case:nth-child(n+2) {
@@ -72,13 +65,10 @@ body {
 .button {
 	width: 200px;
 	height: 50px;
-	color: rgb(215, 176, 190);
+	color: rgb(215, 176, 190);;
 }
 
 .icon {
 	margin: 15px;
 }
 
-:global .active {
-  text-decoration: none;
-}
